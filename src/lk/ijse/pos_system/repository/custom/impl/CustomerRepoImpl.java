@@ -16,7 +16,6 @@ public class CustomerRepoImpl implements CustomerRepo {
 
     @Override
     public boolean add(Customer newCust) throws SQLException, ClassNotFoundException {
-        System.out.println("newCust 3 : "+newCust);
         Session session = FactoryConfiguration.getInstance().getSession();
         Transaction transaction = session.beginTransaction();
         session.save(newCust);

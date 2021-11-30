@@ -5,8 +5,4 @@ import org.hibernate.Session;
 public interface SuperRepo {
 
     void setSession(Session session);
-
-    /*default void rollback(Session session) {
-        session.getTransaction().rollback();
-    }*/
 }

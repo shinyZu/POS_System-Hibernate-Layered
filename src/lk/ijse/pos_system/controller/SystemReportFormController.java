@@ -109,7 +109,6 @@ public class SystemReportFormController {
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
-
         });
 
         try {
@@ -165,7 +164,6 @@ public class SystemReportFormController {
                 e.printStackTrace();
             }
         });
-
     }
 
     private void loadAnnualReport(String date) throws SQLException, ClassNotFoundException {

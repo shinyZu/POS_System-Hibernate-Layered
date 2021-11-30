@@ -17,6 +17,7 @@ public class OrderRepoImpl implements OrderRepo {
 
     @Override
     public boolean add(Orders newOrder) throws SQLException, ClassNotFoundException {
+
         boolean isSaved = true;
         if (newOrder.getCustomer().getCustID().equals("")){
             isSaved = session.createSQLQuery("INSERT INTO Orders (orderID,orderDate,orderCost) VALUES (:id,:date,:cost)")
@@ -53,6 +54,7 @@ public class OrderRepoImpl implements OrderRepo {
         transaction.commit();
         session.close();
         return order;
+        //return session.load(Orders.class, orderId);
     }
 
     @Override
@@ -60,10 +62,10 @@ public class OrderRepoImpl implements OrderRepo {
         Session session = FactoryConfiguration.getInstance().getSession();
         Transaction transaction = session.beginTransaction();
 
-            NativeQuery query = session.createSQLQuery("SELECT orderID FROM Orders ORDER BY orderId DESC LIMIT 1");
-            String newOrderId = (String) query.uniqueResult();
-            transaction.commit();
-            session.close();
+        NativeQuery query = session.createSQLQuery("SELECT orderID FROM Orders ORDER BY orderId DESC LIMIT 1");
+        String newOrderId = (String) query.uniqueResult();
+        transaction.commit();
+        session.close();
 
         if (newOrderId != null) {
             int tempId = Integer.parseInt(newOrderId.split("-")[1]);
@@ -82,7 +84,17 @@ public class OrderRepoImpl implements OrderRepo {
     }
 
     @Override
+    public void setSession(Session session) {
+        this.session = session;
+    }
+
+    @Override
     public List<String> searchOrdersByCustID(String custID) throws SQLException, ClassNotFoundException {
+
+        /*List<String> orderList =session.createQuery("SELECT orderID FROM Orders WHERE customer = :customerId")
+                .setParameter("customerId", session.load(Customer.class,custID)).list();
+        return orderList;*/
+
         Session session = FactoryConfiguration.getInstance().getSession();
         Transaction transaction = session.beginTransaction();
         List<String> orderList = session.createQuery("SELECT orderID FROM Orders WHERE customer = :customerId")
@@ -105,6 +117,13 @@ public class OrderRepoImpl implements OrderRepo {
         transaction.commit();
         session.close();
         return true;
+
+        /*Orders order = new Orders(
+                orderIdSelected,
+                newOrderCost
+        );
+        session.update(order);
+        return true;*/
     }
 
     @Override
@@ -124,10 +143,5 @@ public class OrderRepoImpl implements OrderRepo {
         } else {
             return "INV-001";
         }
-    }
-
-    @Override
-    public void setSession(Session session) {
-        this.session = session;
     }
 }

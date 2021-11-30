@@ -5,11 +5,16 @@ import lk.ijse.pos_system.entity.Orders;
 import lk.ijse.pos_system.repository.RepoFactory;
 import lk.ijse.pos_system.repository.custom.ItemRepo;
 import lk.ijse.pos_system.repository.custom.QueryRepo;
+import lk.ijse.pos_system.util.CrudUtil;
 import lk.ijse.pos_system.util.FactoryConfiguration;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+
+import java.sql.Date;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +25,7 @@ public class QueryRepoImpl implements QueryRepo {
 
     @Override
     public ArrayList<CustomDTO> getCustomerWiseIncome(String date) throws SQLException, ClassNotFoundException {
-        ArrayList<CustomDTO> custIncomeTable = new ArrayList<>();
+        /*ArrayList<CustomDTO> custIncomeTable = new ArrayList<>();
         Session session = FactoryConfiguration.getInstance().getSession();
         Transaction transaction = session.beginTransaction();
 
@@ -35,7 +40,27 @@ public class QueryRepoImpl implements QueryRepo {
         for (CustomDTO dto : resultSet) {
             custIncomeTable.add(dto);
         }
+        return custIncomeTable;*/
+        ArrayList<CustomDTO> custIncomeTable = new ArrayList<>();
+
+        ResultSet rst = CrudUtil.executeQuery("SELECT o.customerId, c.custTitle, c.custName, c.city, SUM(o.orderCost)\n" +
+                "FROM Orders o INNER JOIN Customer c\n" +
+                "ON c.customerId = o.customerId\n" +
+                "WHERE o.date = ?\n" +
+                "GROUP BY customerId", date
+        );
+
+        while (rst.next()) {
+            custIncomeTable.add(new CustomDTO(
+                    rst.getString(1),
+                    rst.getString(2),
+                    rst.getString(3),
+                    rst.getString(4),
+                    rst.getDouble(5)
+            ));
+        }
         return custIncomeTable;
+
     }
 
     @Override
@@ -187,29 +212,29 @@ public class QueryRepoImpl implements QueryRepo {
         this.session = session;
     }
 
-   /* @Override
+    @Override
     public ArrayList<CustomDTO> getDailyReport(String date) throws SQLException, ClassNotFoundException {
         ArrayList<CustomDTO> dailyReportTable = new ArrayList<>();
 
         ResultSet rst1 = CrudUtil.executeQuery("SELECT i.itemCode, i.unitPrice, i.packSize,  SUM(od.orderQTY)\n" +
-                "FROM Item i INNER JOIN OrderDetail od\n" +
+            "FROM Item i INNER JOIN OrderDetail od\n" +
+            "ON i.itemCode = od.itemCode\n" +
+            "INNER JOIN Orders o\n" +
+            "ON o.orderID = od.orderId\n" +
+            "WHERE o.date = ?\n" +
+            "GROUP BY od.itemCode\n" +
+            "ORDER BY od.itemCode", date);
+
+        ResultSet rst2 = CrudUtil.executeQuery("SELECT i.itemCode, i.description, SUM(i.unitPrice * i.packSize * od.orderQTY * (100-d.discount) / 100)\n" +
+                "FROM Item i LEFT JOIN Discount d\n" +
+                "ON i.itemCode = d.itemCode\n" +
+                "INNER JOIN OrderDetail od\n" +
                 "ON i.itemCode = od.itemCode\n" +
                 "INNER JOIN Orders o\n" +
                 "ON o.orderID = od.orderId\n" +
-                "WHERE o.orderDate = ?\n" +
-                "GROUP BY od.itemCode\n" +
-                "ORDER BY od.itemCode", date);
-
-            ResultSet rst2 = CrudUtil.executeQuery("SELECT i.itemCode, i.description, SUM(i.unitPrice * i.packSize * od.orderQTY * (100-d.discount) / 100)\n" +
-                    "FROM Item i LEFT JOIN Discount d\n" +
-                    "ON i.itemCode = d.itemCode\n" +
-                    "INNER JOIN OrderDetail od\n" +
-                    "ON i.itemCode = od.itemCode\n" +
-                    "INNER JOIN Orders o\n" +
-                    "ON o.orderID = od.orderId\n" +
-                    "WHERE o.orderDate = ?\n" +
-                    "GROUP BY i.itemCode\n" +
-                    "ORDER BY i.itemCode", date);
+                "WHERE o.date = ?\n" +
+                "GROUP BY i.itemCode\n" +
+                "ORDER BY i.itemCode", date);
 
         while (rst2.next()) {
             if (rst1.next()) {
@@ -252,7 +277,7 @@ public class QueryRepoImpl implements QueryRepo {
                 "ON i.itemCode = od.itemCode\n" +
                 "INNER JOIN Orders o\n" +
                 "ON o.orderID = od.orderId\n" +
-                "where orderDate LIKE '"+"____-"+d+"-__'\n"+
+                "where date LIKE '"+"____-"+d+"-__'\n"+
                 "GROUP BY od.itemCode\n" +
                 "ORDER BY od.itemCode");
 
@@ -263,7 +288,7 @@ public class QueryRepoImpl implements QueryRepo {
                 "ON i.itemCode = od.itemCode\n" +
                 "INNER JOIN Orders o\n" +
                 "ON o.orderID = od.orderId\n" +
-                "where orderDate LIKE '"+"____-"+d+"-__'\n" +
+                "where date LIKE '"+"____-"+d+"-__'\n" +
                 "GROUP BY i.itemCode\n" +
                 "ORDER BY i.itemCode");
 
@@ -308,7 +333,7 @@ public class QueryRepoImpl implements QueryRepo {
                 "ON i.itemCode = od.itemCode\n" +
                 "INNER JOIN Orders o\n" +
                 "ON o.orderID = od.orderId\n" +
-                "where orderDate LIKE '"+yy+"-__-__'\n" +
+                "where date LIKE '"+yy+"-__-__'\n" +
                 "GROUP BY od.itemCode\n" +
                 "ORDER BY od.itemCode");
 
@@ -319,7 +344,7 @@ public class QueryRepoImpl implements QueryRepo {
                 "ON i.itemCode = od.itemCode\n" +
                 "INNER JOIN Orders o\n" +
                 "ON o.orderID = od.orderId\n" +
-                "where o.orderDate LIKE '"+yy+"-__-__'\n" +
+                "where o.date LIKE '"+yy+"-__-__'\n" +
                 "GROUP BY i.itemCode\n" +
                 "ORDER BY i.itemCode");
 
@@ -366,7 +391,7 @@ public class QueryRepoImpl implements QueryRepo {
             rst = CrudUtil.executeQuery("SELECT DISTINCT od.itemCode, count(od.itemCode), SUM(od.orderQty) \n" +
                     "FROM OrderDetail od INNER JOIN Orders o\n" +
                     "ON od.orderId = o.orderID\n" +
-                    "WHERE o.orderDate = ? \n" +
+                    "WHERE o.date = ? \n" +
                     "GROUP BY od.itemCode\n" +
                     "ORDER BY SUM(od.orderQty) DESC LIMIT 1;",date);
 
@@ -376,7 +401,7 @@ public class QueryRepoImpl implements QueryRepo {
             rst = CrudUtil.executeQuery("SELECT DISTINCT od.itemCode, count(od.itemCode), SUM(od.orderQty) \n" +
                     "FROM OrderDetail od INNER JOIN Orders o\n" +
                     "ON od.orderId = o.orderID\n" +
-                    "WHERE o.orderDate LIKE '"+"____-"+mm+"-__'\n" +
+                    "WHERE o.date LIKE '"+"____-"+mm+"-__'\n" +
                     "GROUP BY od.itemCode\n" +
                     "ORDER BY SUM(od.orderQty) DESC LIMIT 1;");
 
@@ -386,7 +411,7 @@ public class QueryRepoImpl implements QueryRepo {
             rst = CrudUtil.executeQuery("SELECT DISTINCT od.itemCode, count(od.itemCode), SUM(od.orderQty) \n" +
                     "FROM OrderDetail od INNER JOIN Orders o\n" +
                     "ON od.orderId = o.orderID\n" +
-                    "WHERE o.orderDate LIKE '"+yy+"-__-__'\n" +
+                    "WHERE o.date LIKE '"+yy+"-__-__'\n" +
                     "GROUP BY od.itemCode\n" +
                     "ORDER BY SUM(od.orderQty) DESC LIMIT 1;");
         }
@@ -412,7 +437,7 @@ public class QueryRepoImpl implements QueryRepo {
             rst = CrudUtil.executeQuery("SELECT DISTINCT od.itemCode, count(od.itemCode), SUM(od.orderQty) \n" +
                     "FROM OrderDetail od INNER JOIN Orders o\n" +
                     "ON od.orderId = o.orderID\n" +
-                    "WHERE o.orderDate = ? \n" +
+                    "WHERE o.date = ? \n" +
                     "GROUP BY od.itemCode\n" +
                     "ORDER BY SUM(od.orderQty) \n" +
                     "ASC LIMIT 1;",date);
@@ -423,7 +448,7 @@ public class QueryRepoImpl implements QueryRepo {
             rst = CrudUtil.executeQuery("SELECT DISTINCT od.itemCode, count(od.itemCode), SUM(od.orderQty) \n" +
                     "FROM OrderDetail od INNER JOIN Orders o\n" +
                     "ON od.orderId = o.orderID\n" +
-                    "WHERE o.orderDate LIKE '"+"____-"+mm+"-__'\n" +
+                    "WHERE o.date LIKE '"+"____-"+mm+"-__'\n" +
                     "GROUP BY od.itemCode\n" +
                     "ORDER BY SUM(od.orderQty) \n" +
                     "ASC LIMIT 1;");
@@ -434,7 +459,7 @@ public class QueryRepoImpl implements QueryRepo {
             rst = CrudUtil.executeQuery("SELECT DISTINCT od.itemCode, count(od.itemCode), SUM(od.orderQty) \n" +
                     "FROM OrderDetail od INNER JOIN Orders o\n" +
                     "ON od.orderId = o.orderID\n" +
-                    "WHERE o.orderDate LIKE '"+yy+"-__-__'\n" +
+                    "WHERE o.date LIKE '"+yy+"-__-__'\n" +
                     "GROUP BY od.itemCode\n" +
                     "ORDER BY SUM(od.orderQty) \n" +
                     "ASC LIMIT 1;");
@@ -445,5 +470,5 @@ public class QueryRepoImpl implements QueryRepo {
             return leastMovableItem;
         }
         return leastMovableItem;
-    }*/
+    }
 }

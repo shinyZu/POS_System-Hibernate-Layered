@@ -14,7 +14,7 @@ public class ReportBOImpl implements ReportBO {
     private final OrderDetailRepo orderDetailRepo = (OrderDetailRepo) RepoFactory.getRepoFactoryInstance().getRepo(RepoFactory.RepoTypes.ORDERDETAIL);
     private final QueryRepo queryRepo = (QueryRepo) RepoFactory.getRepoFactoryInstance().getRepo(RepoFactory.RepoTypes.QUERY);
 
-    @Override
+     @Override
     public ArrayList<CustomDTO> getDailyReport(String date) throws SQLException, ClassNotFoundException {
         return queryRepo.getDailyReport(date);
     }
@@ -24,7 +24,7 @@ public class ReportBOImpl implements ReportBO {
         return queryRepo.getCustomerWiseIncome(date);
     }
 
-   /* @Override
+   @Override
     public String getMostMovableItem(String reportType, String date) throws SQLException, ClassNotFoundException {
         return queryRepo.getMostMovableItem(reportType, date);
     }
@@ -42,5 +42,5 @@ public class ReportBOImpl implements ReportBO {
     @Override
     public ArrayList<CustomDTO> getAnnualReport(String date) throws SQLException, ClassNotFoundException {
         return queryRepo.getAnnualReport(date);
-    }*/
+    }
 }

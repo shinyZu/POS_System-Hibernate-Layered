@@ -5,7 +5,6 @@ import lk.ijse.pos_system.repository.CrudRepo;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 public interface ItemRepo extends CrudRepo<Item, String> {
 
@@ -15,7 +14,7 @@ public interface ItemRepo extends CrudRepo<Item, String> {
 
     ArrayList<String> getItemCodes() throws SQLException, ClassNotFoundException;
 
-    List<String> getItemDescriptions() throws SQLException, ClassNotFoundException;
+    ArrayList<String> getItemDescriptions() throws SQLException, ClassNotFoundException;
 
     String getItemCode(String description) throws SQLException, ClassNotFoundException;
 

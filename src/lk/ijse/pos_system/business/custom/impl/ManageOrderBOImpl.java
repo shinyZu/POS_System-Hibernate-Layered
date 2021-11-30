@@ -29,37 +29,85 @@ public class ManageOrderBOImpl implements ManageOrderBO {
 
     @Override
     public List<String> searchOrdersByCustID(String custID) throws SQLException, ClassNotFoundException {
+        /*Session session = FactoryConfiguration.getInstance().getSession();
+        session.beginTransaction();
+        orderRepo.setSession(session);
+        List<String> custIDs = orderRepo.searchOrdersByCustID(custID);
+        session.getTransaction().commit();
+        session.close();
+        return custIDs;*/
         return orderRepo.searchOrdersByCustID(custID);
     }
 
     @Override
     public ArrayList<CustomDTO> getOrderedItems(String orderSelected, CustomDTO itemSelected) throws SQLException, ClassNotFoundException {
         return queryRepo.getOrderedItems(orderSelected, itemSelected);
+        /*Session session = FactoryConfiguration.getInstance().getSession();
+        session.beginTransaction();
+        queryRepo.setSession(session);
+        ArrayList<CustomDTO> orderedItems = queryRepo.getOrderedItems(orderSelected, itemSelected);
+        session.getTransaction().commit();
+        session.close();
+        return orderedItems;*/
     }
 
     @Override
     public ArrayList<Double> getOldPaymentInfo(String orderSelected) throws SQLException, ClassNotFoundException {
         return queryRepo.getOldPaymentInfo(orderSelected);
+        /*Session session = FactoryConfiguration.getInstance().getSession();
+        session.beginTransaction();
+        queryRepo.setSession(session);
+        ArrayList<Double> oldPaymentInfo = queryRepo.getOldPaymentInfo(orderSelected);
+        session.getTransaction().commit();
+        session.close();
+        return oldPaymentInfo;*/
     }
 
     @Override
     public int splitPackSize(String itemCode, String packSize) throws SQLException, ClassNotFoundException {
         return itemRepo.splitPackSize(itemCode, packSize);
+        /*Session session = FactoryConfiguration.getInstance().getSession();
+        session.beginTransaction();
+        itemRepo.setSession(session);
+        int size = itemRepo.splitPackSize(itemCode, packSize);
+        session.getTransaction().commit();
+        session.close();
+        return size;*/
     }
 
     @Override
     public boolean deleteItemFromOrder(OrderDetailDTO dto) throws SQLException, ClassNotFoundException {
         return orderDetailRepo.delete(new OrderDetail(orderRepo.getOrder(dto.getOrderID()), itemRepo.getItem(dto.getItemCode())));
+        /*Session session = FactoryConfiguration.getInstance().getSession();
+        session.beginTransaction();
+        orderDetailRepo.setSession(session);
+        orderDetailRepo.delete(new OrderDetail(orderRepo.getOrder(dto.getOrderID()), itemRepo.getItem(dto.getItemCode())));
+        session.getTransaction().commit();
+        session.close();
+        return true;*/
     }
 
     @Override
     public boolean editQtyOnHand(String itemCode, int qtyToRestock) throws SQLException, ClassNotFoundException {
         return itemRepo.editQtyOnHand(itemCode, qtyToRestock);
+        /*Session session = FactoryConfiguration.getInstance().getSession();
+        session.beginTransaction();
+        itemRepo.setSession(session);
+        boolean isEdited = itemRepo.editQtyOnHand(itemCode, qtyToRestock);
+        session.getTransaction().commit();
+        session.close();
+        return isEdited;*/
     }
 
     @Override
     public void deleteOrder(OrderDTO dto) throws SQLException, ClassNotFoundException {
         orderRepo.delete(new Orders(dto.getOrderID()));
+        /*Session session = FactoryConfiguration.getInstance().getSession();
+        session.beginTransaction();
+        orderRepo.setSession(session);
+        orderRepo.delete(new Orders(dto.getOrderID()));
+        session.getTransaction().commit();
+        session.close();*/
     }
 
     @Override
@@ -82,15 +130,6 @@ public class ManageOrderBOImpl implements ManageOrderBO {
         Session session = FactoryConfiguration.getInstance().getSession();
         Transaction transaction = session.beginTransaction();
 
-        /*boolean isOrderUpdated;
-        if (orderRepo.update(order)) {
-            if (orderDetailRepo.update(orderDetail)) {
-                //isOrderUpdated = itemRepo.updateEditedQtyOnHand(orderDetailDTO.getItemCode(), newQtyOnHand);
-                if (itemRepo.updateEditedQtyOnHand(orderDetailDTO.getItemCode(), newQtyOnHand)) {
-                    isOrderUpdated = true;
-                }
-            }
-        }*/
         try {
             orderRepo.setSession(session);
             orderDetailRepo.setSession(session);
@@ -149,10 +188,24 @@ public class ManageOrderBOImpl implements ManageOrderBO {
     @Override
     public String getDiscount(String itemCode) throws SQLException, ClassNotFoundException {
         return discountRepo.getDiscount(itemCode);
+        /*Session session = FactoryConfiguration.getInstance().getSession();
+        session.beginTransaction();
+        discountRepo.setSession(session);
+        String discount = discountRepo.getDiscount(itemCode);
+        session.getTransaction().commit();
+        session.close();
+        return discount;*/
     }
 
     @Override
     public boolean isCustomerExists(String custID) throws SQLException, ClassNotFoundException {
         return customerRepo.isCustomerExists(custID);
+        /*Session session = FactoryConfiguration.getInstance().getSession();
+        session.beginTransaction();
+        customerRepo.setSession(session);
+        boolean exists = customerRepo.isCustomerExists(custID);
+        session.getTransaction().commit();
+        session.close();
+        return exists;*/
     }
 }

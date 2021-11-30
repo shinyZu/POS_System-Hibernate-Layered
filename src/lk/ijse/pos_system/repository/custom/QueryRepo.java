@@ -16,7 +16,7 @@ public interface QueryRepo extends SuperRepo {
 
     ArrayList<CustomDTO> getAllItems() throws SQLException, ClassNotFoundException;
 
-    /*ArrayList<CustomDTO> getDailyReport(String date) throws SQLException, ClassNotFoundException;
+    ArrayList<CustomDTO> getDailyReport(String date) throws SQLException, ClassNotFoundException;
 
     ArrayList<CustomDTO> getMonthlyReport(String date) throws SQLException, ClassNotFoundException;
 
@@ -24,5 +24,5 @@ public interface QueryRepo extends SuperRepo {
 
     String getMostMovableItem(String reportType, String date) throws SQLException, ClassNotFoundException;
 
-    String getLeastMovableItem(String reportType, String date) throws SQLException, ClassNotFoundException;*/
+    String getLeastMovableItem(String reportType, String date) throws SQLException, ClassNotFoundException;
 }

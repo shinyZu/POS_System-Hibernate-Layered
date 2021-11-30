@@ -16,12 +16,12 @@ public class OrderDetailRepoImpl implements OrderDetailRepo {
 
     @Override
     public boolean add(OrderDetail orderDetail) throws SQLException, ClassNotFoundException {
-        return false;
+        throw new UnsupportedOperationException("Not Supported Yet");
     }
 
     @Override
     public boolean delete(OrderDetail orderToRemove) throws SQLException, ClassNotFoundException {
-        return false;
+        throw new UnsupportedOperationException("Not Supported Yet");
     }
 
     @Override

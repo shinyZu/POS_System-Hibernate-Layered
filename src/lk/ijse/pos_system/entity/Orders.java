@@ -11,7 +11,7 @@ import java.util.List;
 public class Orders {
     @Id
     private String orderID;
-    @CreationTimestamp
+    @Temporal(TemporalType.DATE)
     private Date date;
     private double orderCost;
     @ManyToOne
@@ -25,6 +25,10 @@ public class Orders {
 
     public Orders(String orderID) {
         this.setOrderID(orderID);
+    }
+
+    public Orders(Date date) {
+        this.date = date;
     }
 
     public Orders(String orderID, Date date, double orderCost, Customer customer) {

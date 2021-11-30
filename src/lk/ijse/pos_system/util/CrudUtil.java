@@ -32,13 +32,4 @@ public class CrudUtil {
     public static ResultSet executeQuery(String sql, Object... args) throws SQLException, ClassNotFoundException {
         return getPreparedStatement(sql,args).executeQuery();
     }
-
-    /*public static Transaction getTransaction(){
-        Session session = FactoryConfiguration.getInstance().getSession();
-        return session.beginTransaction();
-    }
-
-    public static Query getQuery(String hql, Object... args) {
-        getTransaction()
-    }*/
 }

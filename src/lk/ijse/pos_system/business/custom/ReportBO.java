@@ -12,11 +12,11 @@ public interface ReportBO extends SuperBO {
 
     ArrayList<CustomDTO> getCustomerWiseIncome(String date) throws SQLException, ClassNotFoundException;
 
-    /*String getMostMovableItem(String reportType, String date) throws SQLException, ClassNotFoundException;
+    String getMostMovableItem(String reportType, String date) throws SQLException, ClassNotFoundException;
 
     String getLeastMovableItem(String reportType, String date) throws SQLException, ClassNotFoundException;
 
     ArrayList<CustomDTO> getMonthlyReport(String date) throws SQLException, ClassNotFoundException;
 
-    ArrayList<CustomDTO> getAnnualReport(String date) throws SQLException, ClassNotFoundException;*/
+    ArrayList<CustomDTO> getAnnualReport(String date) throws SQLException, ClassNotFoundException;
 }
